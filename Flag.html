@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tebak Bendera Multiplayer</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .game-container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            padding: 25px;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        .menu-screen, .game-screen {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .game-screen {
+            display: none;
+        }
+
+        input {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .score-board {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #e9f5ff;
+            border-radius: 10px;
+        }
+
+        .player {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+        }
+
+        .player-you {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .target-score {
+            text-align: center;
+            font-size: 18px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .progress-container {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .progress-bar {
+            height: 20px;
+            border-radius: 10px;
+            background-color: #4CAF50;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .country-name {
+            font-size: 28px;
+            margin: 30px 0;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+        }
+
+        .flags-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .flag-option {
+            font-size: 60px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .flag-option.disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .result-message {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .correct {
+            color: #4CAF50;
+        }
+
+        .wrong {
+            color: #f44336;
+        }
+
+        .winner-message {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            color: #FFD700;
+            display: none;
+        }
+
+        .room-code {
+            font-size: 24px;
+            font-weight: bold;
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 8px;
+            margin: 10px 0;
+            text-align: center;
+        }
+
+        .player-list {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .player-badge {
+            display: inline-block;
+            padding: 8px 15px;
+            margin: 5px;
+            background-color: #e0e0e0;
+            border-radius: 20px;
+        }
+
+        /* Penambahan CSS untuk mencoba fullscreen */
+        html, body {
+            height: 100%; /* Pastikan html dan body mengisi seluruh tinggi viewport */
+            margin: 0; /* Hilangkan margin default */
+            padding: 0; /* Hilangkan padding default */
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center; /* Pusatkan vertikal juga */
+        }
+
+        .game-container {
+            /* Anda bisa mencoba memberikan tinggi maksimal agar tidak terlalu besar di layar besar */
+            max-height: 95vh;
+            overflow-y: auto; /* Jika konten masih lebih tinggi dari max-height */
+        }
+    </style>
+
+</head>
+<body>
+    <div class="game-container">
+        <div class="menu-screen" id="menu-screen">
+            <h1>Tebak Bendera Multiplayer</h1>
+            <input type="text" id="player-name" placeholder="Masukkan nama kamu" maxlength="15">
+            <button id="create-room-btn">Buat Room Baru</button>
+            <div>ATAU</div>
+            <input type="text" id="room-code" placeholder="Masukkan kode room">
+            <button id="join-room-btn">Gabung Room</button>
+        </div>
+        <div class="game-screen" id="game-screen">
+        <div class="room-code" id="display-room-code"></div>
+        <div class="player-list" id="player-list"></div>
+
+        <div class="target-score">Target: 50 poin | Benar: +5 | Salah: -2</div>
+
+        <div class="score-board">
+            <div class="player" id="player-you">Anda: 0</div>
+            <div class="player" id="player-opponent">Lawan: 0</div>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progress-you"></div>
+        </div>
+
+        <div class="country-name" id="country-name"></div>
+
+        <div class="flags-container" id="flags-container"></div>
+
+        <div class="result-message" id="result-message"></div>
+
+        <div class="winner-message" id="winner-message"></div>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+    import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyDNWgoZq-dv2BZBDvWBd1z2DaifaAUebXI",
+        authDomain: "nandaxploit-693a2.firebaseapp.com",
+        databaseURL: "https://nandaxploit-693a2-default-rtdb.firebaseio.com",
+        projectId: "nandaxploit-693a2",
+        storageBucket: "nandaxploit-693a2.firebasestorage.app",
+        messagingSenderId: "335541576694",
+        appId: "1:335541576694:web:8678228543159437969dd7",
+        measurementId: "G-ZJDW58DH9D"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    // Game data dengan negara-negara yang lebih sulit
+    const countries = [
+        { name: "Kiribati", flag: "🇰🇮" },
+        { name: "Tuvalu", flag: "🇹🇻" },
+        { name: "Bhutan", flag: "🇧🇹" },
+        { name: "Liechtenstein", flag: "🇱🇮" },
+        { name: "Andorra", flag: "🇦🇩" },
+        { name: "San Marino", flag: "🇸🇲" },
+        { name: "Seychelles", flag: "🇸🇨" },
+        { name: "Comoros", flag: "🇰🇲" },
+        { name: "Djibouti", flag: "🇩🇯" },
+        { name: "Eritrea", flag: "🇪🇷" },
+        { name: "Sao Tome and Principe", flag: "🇸🇹" },
+        { name: "Timor Leste", flag: "🇹🇱" },
+        { name: "Palau", flag: "🇵🇼" },
+        { name: "Marshall Islands", flag: "🇲🇭" },
+        { name: "Micronesia", flag: "🇫🇲" },
+        { name: "Nauru", flag: "🇳🇷" },
+        { name: "Vanuatu", flag: "🇻🇺" },
+        { name: "Tonga", flag: "🇹🇴" },
+        { name: "Samoa", flag: "🇼🇸" },
+        { name: "Grenada", flag: "🇬🇩" }
+    ];
+
+    // Game variables
+    const TARGET_SCORE = 50;
+    const CORRECT_SCORE = 5;
+    const WRONG_SCORE = -2;
+    let roomId = '';
+    let yourPlayerId = ''; // ID pemain lokal
+    let playerName = '';
+    let isHost = false;
+    let gameActive = true;
+    let players = {};
+    let currentQuestion = {};
+    let correctAnswer = "";
+
+    // DOM elements
+    const menuScreen = document.getElementById('menu-screen');
+    const gameScreen = document.getElementById('game-screen');
+    const playerNameInput = document.getElementById('player-name');
+    const roomCodeInput = document.getElementById('room-code');
+    const createRoomBtn = document.getElementById('create-room-btn');
+    const joinRoomBtn = document.getElementById('join-room-btn');
+    const displayRoomCode = document.getElementById('display-room-code');
+    const playerList = document.getElementById('player-list');
+    const playerYouDisplay = document.getElementById('player-you');
+    const playerOpponentDisplay = document.getElementById('player-opponent');
+    const progressYou = document.getElementById('progress-you');
+    const countryNameDisplay = document.getElementById('country-name');
+    const flagsContainer = document.getElementById('flags-container');
+    const resultMessage = document.getElementById('result-message');
+    const winnerMessage = document.getElementById('winner-message');
+
+    // Event listeners
+    createRoomBtn.addEventListener('click', createRoom);
+    joinRoomBtn.addEventListener('click', joinRoom);
+
+    function generateId() {
+        return Math.random().toString(36).substr(2, 9);
+    }
+
+    function generateRoomCode() {
+        return Math.random().toString(36).substr(2, 5).toUpperCase();
+    }
+
+    async function createRoom() {
+        playerName = playerNameInput.value.trim();
+        if (!playerName) {
+            alert('Masukkan nama kamu dulu!');
+            return;
+        }
+
+        const playerId = generateId();
+        yourPlayerId = playerId; // Set ID pemain lokal
+        roomId = generateRoomCode();
+        isHost = true;
+
+        displayRoomCode.textContent = roomId;
+        menuScreen.style.display = 'none';
+        gameScreen.style.display = 'flex';
+
+        try {
+            await set(ref(database, 'rooms/' + roomId), {
+                host: playerId,
+                players: {
+                    [playerId]: {
+                        name: playerName,
+                        score: 0
+                    }
+                },
+                gameState: "waiting",
+                currentQuestion: null
+            });
+
+            await navigator.clipboard.writeText(roomId);
+            alert(`Room berhasil dibuat! Kode: ${roomId} (sudah disalin)`);
+
+            setupRoomListeners();
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Gagal membuat room");
+        }
+    }
+
+    async function joinRoom() {
+        playerName = playerNameInput.value.trim();
+        roomId = roomCodeInput.value.trim().toUpperCase();
+
+        if (!playerName || !roomId) {
+            alert('Isi nama dan kode room!');
+            return;
+        }
+
+        const playerId = generateId();
+        yourPlayerId = playerId; // Set ID pemain lokal
+        isHost = false;
+
+        try {
+            await set(ref(database, 'rooms/' + roomId + '/players/' + playerId), {
+                name: playerName,
+                score: 0
+            });
+
+            displayRoomCode.textContent = roomId;
+            menuScreen.style.display = 'none';
+            gameScreen.style.display = 'flex';
+
+            setupRoomListeners();
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Gagal gabung room");
+        }
+    }
+
+    function setupRoomListeners() {
+        onValue(ref(database, 'rooms/' + roomId + '/players'), (snapshot) => {
+            players = snapshot.val() || {};
+            updatePlayerList();
+
+            // Perbarui tampilan skor dan identifikasi Anda dan Lawan
+            let yourScore = 0;
+            let opponentScore = 0;
+            let opponentName = "Lawan";
+
+            for (const playerId in players) {
+                if (players.hasOwnProperty(playerId)) {
+                    const player = players[playerId];
+                    if (playerId === yourPlayerId) {
+                        yourScore = player.score;
+                        playerYouDisplay.textContent = `Anda: ${yourScore}`;
+                        progressYou.style.width = `${(yourScore / TARGET_SCORE) * 100}%`;
+                    } else {
+                        opponentScore = player.score;
+                        opponentName = player.name;
+                        playerOpponentDisplay.textContent = `${opponentName}: ${opponentScore}`;
+                    }
+                }
+            }
+
+            if (isHost && Object.keys(players).length >= 2) {
+                update(ref(database, 'rooms/' + roomId), {
+                    gameState: "playing"
+                });
+            }
+        });
+
+        onValue(ref(database, 'rooms/' + roomId + '/gameState'), (snapshot) => {
+            if (snapshot.val() === "playing") {
+                startGame();
+            }
+        });
+
+        onValue(ref(database, 'rooms/' + roomId + '/currentQuestion'), (snapshot) => {
+            const question = snapshot.val();
+            if (question) {
+                currentQuestion = question;
+                correctAnswer = question.correctAnswer;
+                displayQuestion(question.name, question.options);
+            }
+        });
+
+        onValue(ref(database, 'rooms/' + roomId + '/winner'), (snapshot) => {
+            const winner = snapshot.val();
+            if (winner) {
+                showWinner(winner);
+            }
+        });
+    }
+
+    function updatePlayerList() {
+        playerList.innerHTML = '';
+        Object.entries(players).forEach(([id, player]) => {
+            const badge = document.createElement('div');
+            badge.className = 'player-badge';
+            badge.textContent = id === yourPlayerId ? `${player.name} (Anda)` : player.name;
+            playerList.appendChild(badge);
+        });
+    }
+
+    function startGame() {
+        if (isHost) {
+            const updates = {};
+            Object.keys(players).forEach(id => {
+                updates['players/' + id + '/score'] = 0;
+            });
+            updates['winner'] = null;
+
+            update(ref(database, 'rooms/' + roomId), updates);
+            generateQuestion();
+        }
+
+        gameActive = true;
+        winnerMessage.style.display = 'none';
+    }
+
+    function generateQuestion() {
+        if (!gameActive) return;
+
+        const correctIndex = Math.floor(Math.random() * countries.length);
+        correctAnswer = countries[correctIndex].flag;
+        currentQuestion = countries[correctIndex];
+
+        let flagOptions = [correctAnswer];
+        while (flagOptions.length < 4) {
+            const randomFlag = countries[Math.floor(Math.random()
+            * countries.length)].flag;
+            if (!flagOptions.includes(randomFlag)) flagOptions.push(randomFlag);
+        }
+
+        flagOptions = flagOptions.sort(() => Math.random() - 0.5);
+
+        update(ref(database, 'rooms/' + roomId), {
+            currentQuestion: {
+                name: currentQuestion.name,
+                options: flagOptions,
+                correctAnswer: correctAnswer
+            }
+        });
+    }
+
+    function displayQuestion(name, options) {
+        countryNameDisplay.textContent = name;
+        flagsContainer.innerHTML = '';
+
+        options.forEach(flag => {
+            const flagElement = document.createElement('div');
+            flagElement.className = 'flag-option';
+            flagElement.textContent = flag;
+            flagElement.onclick = () => selectFlag(flag);
+            flagsContainer.appendChild(flagElement);
+        });
+
+        resultMessage.textContent = '';
+    }
+
+    function selectFlag(selectedFlag) {
+        if (!gameActive || document.querySelector('.flag-option.disabled')) return;
+
+        document.querySelectorAll('.flag-option').forEach(el => {
+            el.classList.add('disabled');
+        });
+
+        const isCorrect = selectedFlag === correctAnswer;
+        const scoreChange = isCorrect ? CORRECT_SCORE : WRONG_SCORE;
+
+        update(ref(database, 'rooms/' + roomId + '/players/' + yourPlayerId), {
+            score: Math.max(0, (players[yourPlayerId]?.score || 0) + scoreChange)
+        }).then(() => {
+            resultMessage.textContent = isCorrect ? 'Benar! +5 poin' : 'Salah! -2 poin';
+            resultMessage.className = isCorrect ? 'result-message correct' : 'result-message wrong';
+
+            if (isHost) {
+                setTimeout(generateQuestion, 1500);
+            }
+
+            checkWinner();
+        });
+    }
+
+    function checkWinner() {
+        const currentScore = players[yourPlayerId]?.score || 0;
+        if (currentScore >= TARGET_SCORE && isHost) {
+            update(ref(database, 'rooms/' + roomId), {
+                winner: players[yourPlayerId].name
+            });
+        }
+    }
+
+    function showWinner(winner) {
+        gameActive = false;
+        winnerMessage.textContent = winner === players[yourPlayerId]?.name ?
+            "ANDA MENANG! 🎉" : `${winner} Menang!`;
+        winnerMessage.style.display = 'block';
+    }
+</script>
+
+</body>
+  </html>
