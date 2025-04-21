@@ -21,24 +21,20 @@
             width: 90%;
             max-width: 600px;
         }
-
         .menu-screen, .game-screen {
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
-
         .game-screen {
             display: none;
         }
-
         input {
             padding: 12px;
             border: 1px solid #ddd;
             border-radius: 8px;
             font-size: 16px;
         }
-
         button {
             background-color: #4CAF50;
             color: white;
@@ -48,7 +44,6 @@
             border-radius: 8px;
             cursor: pointer;
         }
-
         .score-board {
             display: flex;
             justify-content: space-between;
@@ -57,32 +52,27 @@
             background-color: #e9f5ff;
             border-radius: 10px;
         }
-
         .player {
             padding: 10px 20px;
             border-radius: 8px;
             font-weight: bold;
         }
-
         .player-you {
             background-color: #4CAF50;
             color: white;
         }
-
         .target-score {
             text-align: center;
             font-size: 18px;
             margin: 10px 0;
             font-weight: bold;
         }
-
         .progress-container {
             width: 100%;
             background-color: #e0e0e0;
             border-radius: 10px;
             margin: 15px 0;
         }
-
         .progress-bar {
             height: 20px;
             border-radius: 10px;
@@ -90,7 +80,6 @@
             width: 0%;
             transition: width 0.3s;
         }
-
         .country-name {
             font-size: 28px;
             margin: 30px 0;
@@ -98,14 +87,12 @@
             color: #333;
             text-align: center;
         }
-
         .flags-container {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 15px;
             margin-bottom: 20px;
         }
-
         .flag-option {
             font-size: 60px;
             padding: 20px;
@@ -114,27 +101,22 @@
             cursor: pointer;
             text-align: center;
         }
-
         .flag-option.disabled {
             opacity: 0.6;
             cursor: not-allowed;
         }
-
         .result-message {
             font-size: 20px;
             font-weight: bold;
             margin: 15px 0;
             text-align: center;
         }
-
         .correct {
             color: #4CAF50;
         }
-
         .wrong {
             color: #f44336;
         }
-
         .winner-message {
             font-size: 24px;
             font-weight: bold;
@@ -143,7 +125,14 @@
             color: #FFD700;
             display: none;
         }
-
+        .loser-message {
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+            color: #f44336;
+            display: none;
+        }
         .room-code {
             font-size: 24px;
             font-weight: bold;
@@ -153,12 +142,10 @@
             margin: 10px 0;
             text-align: center;
         }
-
         .player-list {
             margin: 20px 0;
             text-align: center;
         }
-
         .player-badge {
             display: inline-block;
             padding: 8px 15px;
@@ -166,27 +153,25 @@
             background-color: #e0e0e0;
             border-radius: 20px;
         }
-
-        /* Penambahan CSS untuk mencoba fullscreen */
-        html, body {
-            height: 100%; /* Pastikan html dan body mengisi seluruh tinggi viewport */
-            margin: 0; /* Hilangkan margin default */
-            padding: 0; /* Hilangkan padding default */
-        }
-
-        body {
-            display: flex;
+        .rematch-container {
+            display: none;
             justify-content: center;
-            align-items: center; /* Pusatkan vertikal juga */
+            margin-top: 20px;
         }
-
-        .game-container {
-            /* Anda bisa mencoba memberikan tinggi maksimal agar tidak terlalu besar di layar besar */
-            max-height: 95vh;
-            overflow-y: auto; /* Jika konten masih lebih tinggi dari max-height */
+        .rematch-btn {
+            background-color: #2196F3;
+            padding: 12px 24px;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            border: none;
+        }
+        .rematch-btn:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
         }
     </style>
-
 </head>
 <body>
     <div class="game-container">
@@ -199,344 +184,502 @@
             <button id="join-room-btn">Gabung Room</button>
         </div>
         <div class="game-screen" id="game-screen">
-        <div class="room-code" id="display-room-code"></div>
-        <div class="player-list" id="player-list"></div>
-
-        <div class="target-score">Target: 50 poin | Benar: +5 | Salah: -2</div>
-
-        <div class="score-board">
-            <div class="player" id="player-you">Anda: 0</div>
-            <div class="player" id="player-opponent">Lawan: 0</div>
+            <div class="room-code" id="display-room-code"></div>
+            <div class="player-list" id="player-list"></div>
+            <div class="target-score">Target: 50 poin | Benar: +5 | Salah: -2</div>
+            <div class="score-board">
+                <div class="player" id="player-you">Anda: 0</div>
+                <div class="player" id="player-opponent">Lawan: 0</div>
+            </div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-you"></div>
+            </div>
+            <div class="country-name" id="country-name"></div>
+            <div class="flags-container" id="flags-container"></div>
+            <div class="result-message" id="result-message"></div>
+            <div class="winner-message" id="winner-message"></div>
+            <div class="loser-message" id="loser-message"></div>
+            <div class="rematch-container" id="rematch-container">
+                <button class="rematch-btn" id="rematch-btn">Tantang Ulang</button>
+            </div>
         </div>
-
-        <div class="progress-container">
-            <div class="progress-bar" id="progress-you"></div>
-        </div>
-
-        <div class="country-name" id="country-name"></div>
-
-        <div class="flags-container" id="flags-container"></div>
-
-        <div class="result-message" id="result-message"></div>
-
-        <div class="winner-message" id="winner-message"></div>
     </div>
-</div>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
-    import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+        import { getDatabase, ref, set, onValue, update } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-database.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyDNWgoZq-dv2BZBDvWBd1z2DaifaAUebXI",
-        authDomain: "nandaxploit-693a2.firebaseapp.com",
-        databaseURL: "https://nandaxploit-693a2-default-rtdb.firebaseio.com",
-        projectId: "nandaxploit-693a2",
-        storageBucket: "nandaxploit-693a2.firebasestorage.app",
-        messagingSenderId: "335541576694",
-        appId: "1:335541576694:web:8678228543159437969dd7",
-        measurementId: "G-ZJDW58DH9D"
-    };
+        const firebaseConfig = {
+            apiKey: "AIzaSyDNWgoZq-dv2BZBDvWBd1z2DaifaAUebXI",
+            authDomain: "nandaxploit-693a2.firebaseapp.com",
+            databaseURL: "https://nandaxploit-693a2-default-rtdb.firebaseio.com",
+            projectId: "nandaxploit-693a2",
+            storageBucket: "nandaxploit-693a2.firebasestorage.app",
+            messagingSenderId: "335541576694",
+            appId: "1:335541576694:web:8678228543159437969dd7",
+            measurementId: "G-ZJDW58DH9D"
+        };
 
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
 
-    // Game data dengan negara-negara yang lebih sulit
-    const countries = [
-        { name: "Kiribati", flag: "🇰🇮" },
-        { name: "Tuvalu", flag: "🇹🇻" },
-        { name: "Bhutan", flag: "🇧🇹" },
-        { name: "Liechtenstein", flag: "🇱🇮" },
-        { name: "Andorra", flag: "🇦🇩" },
-        { name: "San Marino", flag: "🇸🇲" },
-        { name: "Seychelles", flag: "🇸🇨" },
-        { name: "Comoros", flag: "🇰🇲" },
-        { name: "Djibouti", flag: "🇩🇯" },
-        { name: "Eritrea", flag: "🇪🇷" },
-        { name: "Sao Tome and Principe", flag: "🇸🇹" },
-        { name: "Timor Leste", flag: "🇹🇱" },
-        { name: "Palau", flag: "🇵🇼" },
-        { name: "Marshall Islands", flag: "🇲🇭" },
-        { name: "Micronesia", flag: "🇫🇲" },
-        { name: "Nauru", flag: "🇳🇷" },
-        { name: "Vanuatu", flag: "🇻🇺" },
-        { name: "Tonga", flag: "🇹🇴" },
-        { name: "Samoa", flag: "🇼🇸" },
-        { name: "Grenada", flag: "🇬🇩" }
-    ];
+        // ==============================================
+        // Daftar negara (tetap sama dengan yang Anda miliki)
+        const countries = [
+    { name: "Burundi", flag: "🇧🇮" },
+    { name: "Comoros", flag: "🇰🇲" },
+    { name: "Djibouti", flag: "🇩🇯" },
+    { name: "Equatorial Guinea", flag: "🇬🇶" },
+    { name: "Eritrea", flag: "🇪🇷" },
+    { name: "Eswatini", flag: "🇸🇿" },
+    { name: "Gabon", flag: "🇬🇦" },
+    { name: "Guinea-Bissau", flag: "🇬🇼" },
+    { name: "Lesotho", flag: "🇱🇸" },
+    { name: "Malawi", flag: "🇲🇼" },
+    { name: "Mauritania", flag: "🇲🇷" },
+    { name: "São Tomé and Príncipe", flag: "🇸🇹" },
+    { name: "Togo", flag: "🇹🇬" },
+    { name: "Vanuatu", flag: "🇻🇺" },
+    { name: "Tuvalu", flag: "🇹🇻" },
+    { name: "Kiribati", flag: "🇰🇮" },
+    { name: "Marshall Islands", flag: "🇲🇭" },
+    { name: "Micronesia", flag: "🇫🇲" },
+    { name: "Nauru", flag: "🇳🇷" },
+    { name: "Palau", flag: "🇵🇼" },
+    { name: "Samoa", flag: "🇼🇸" },
+    { name: "Solomon Islands", flag: "🇸🇧" },
+    { name: "Tonga", flag: "🇹🇴" },
+    { name: "Belize", flag: "🇧🇿" },
+    { name: "Dominica", flag: "🇩🇲" },
+    { name: "Grenada", flag: "🇬🇩" },
+    { name: "Saint Kitts and Nevis", flag: "🇰🇳" },
+    { name: "Saint Lucia", flag: "🇱🇨" },
+    { name: "Saint Vincent and the Grenadines", flag: "🇻🇨" },
+    { name: "Suriname", flag: "🇸🇷" },
+    { name: "Bhutan", flag: "🇧🇹" },
+    { name: "Brunei", flag: "🇧🇳" },
+    { name: "East Timor", flag: "🇹🇱" },
+    { name: "Laos", flag: "🇱🇦" },
+    { name: "Maldives", flag: "🇲🇻" },
+    { name: "Mongolia", flag: "🇲🇳" },
+    { name: "Nepal", flag: "🇳🇵" },
+    { name: "Uzbekistan", flag: "🇺🇿" },
+    { name: "Tajikistan", flag: "🇹🇯" },
+    { name: "Kyrgyzstan", flag: "🇰🇬" },
+    { name: "Armenia", flag: "🇦🇲" },
+    { name: "Azerbaijan", flag: "🇦🇿" },
+    { name: "Georgia", flag: "🇬🇪" },
+    { name: "North Macedonia", flag: "🇲🇰" },
+    { name: "Albania", flag: "🇦🇱" },
+    { name: "Moldova", flag: "🇲🇩" },
+    { name: "Kosovo", flag: "🇽🇰" },
+    { name: "Andorra", flag: "🇦🇩" },
+    { name: "Liechtenstein", flag: "🇱🇮" },
+    { name: "San Marino", flag: "🇸🇲" },
+    { name: "Monaco", flag: "🇲🇨" },
+    { name: "Vatican City", flag: "🇻🇦" },
+    { name: "Bosnia and Herzegovina", flag: "🇧🇦" },
+    { name: "Montenegro", flag: "🇲🇪" },
+    { name: "Slovenia", flag: "🇸🇮" },
+    { name: "Luxembourg", flag: "🇱🇺" },
+    { name: "Cyprus", flag: "🇨🇾" },
+    { name: "Malta", flag: "🇲🇹" },
+    { name: "Lebanon", flag: "🇱🇧" },
+    { name: "Jordan", flag: "🇯🇴" },
+    { name: "Yemen", flag: "🇾🇪" },
+    { name: "Oman", flag: "🇴🇲" },
+    { name: "Qatar", flag: "🇶🇦" },
+    { name: "Bahrain", flag: "🇧🇭" },
+    { name: "Kuwait", flag: "🇰🇼" },
+    { name: "Iraq", flag: "🇮🇶" },
+    { name: "Syria", flag: "🇸🇾" },
+    { name: "Afghanistan", flag: "🇦🇫" },
+    { name: "Honduras", flag: "🇭🇳" },
+    { name: "El Salvador", flag: "🇸🇻" },
+    { name: "Nicaragua", flag: "🇳🇮" },
+    { name: "Paraguay", flag: "🇵🇾" },
+    { name: "Guyana", flag: "🇬🇾" },
+    { name: "Cape Verde", flag: "🇨🇻" },
+    { name: "Seychelles", flag: "🇸🇨" },
+    { name: "The Gambia", flag: "🇬🇲" },
+    { name: "Chad", flag: "🇹🇩" },
+    { name: "Central African Republic", flag: "🇨🇫" },
+    { name: "Liberia", flag: "🇱🇷" },
+    { name: "Sierra Leone", flag: "🇸🇱" },
+    { name: "Benin", flag: "🇧🇯" },
+    { name: "Niger", flag: "🇳🇪" },
+    { name: "South Sudan", flag: "🇸🇸" },
+    { name: "Zimbabwe", flag: "🇿🇼" },
+    { name: "Zambia", flag: "🇿🇲" },
+    { name: "Namibia", flag: "🇳🇦" },
+    { name: "Botswana", flag: "🇧🇼" },
+    { name: "Mozambique", flag: "🇲🇿" },
+    { name: "Guinea", flag: "🇬🇳" },
+    { name: "Ivory Coast", flag: "🇨🇮" },
+    { name: "Cameroon", flag: "🇨🇲" },
+    { name: "Rwanda", flag: "🇷🇼" },
+    { name: "Burkina Faso", flag: "🇧🇫" },
+    { name: "Libya", flag: "🇱🇾" },
+    { name: "Mauritius", flag: "🇲🇺" },
+    { name: "Tanzania", flag: "🇹🇿" },
+    { name: "Angola", flag: "🇦🇴" }
+];
 
-    // Game variables
-    const TARGET_SCORE = 50;
-    const CORRECT_SCORE = 5;
-    const WRONG_SCORE = -2;
-    let roomId = '';
-    let yourPlayerId = ''; // ID pemain lokal
-    let playerName = '';
-    let isHost = false;
-    let gameActive = true;
-    let players = {};
-    let currentQuestion = {};
-    let correctAnswer = "";
+        // ==============================================
 
-    // DOM elements
-    const menuScreen = document.getElementById('menu-screen');
-    const gameScreen = document.getElementById('game-screen');
-    const playerNameInput = document.getElementById('player-name');
-    const roomCodeInput = document.getElementById('room-code');
-    const createRoomBtn = document.getElementById('create-room-btn');
-    const joinRoomBtn = document.getElementById('join-room-btn');
-    const displayRoomCode = document.getElementById('display-room-code');
-    const playerList = document.getElementById('player-list');
-    const playerYouDisplay = document.getElementById('player-you');
-    const playerOpponentDisplay = document.getElementById('player-opponent');
-    const progressYou = document.getElementById('progress-you');
-    const countryNameDisplay = document.getElementById('country-name');
-    const flagsContainer = document.getElementById('flags-container');
-    const resultMessage = document.getElementById('result-message');
-    const winnerMessage = document.getElementById('winner-message');
+        // Game variables (tetap sama)
+        const TARGET_SCORE = 50;
+        const CORRECT_SCORE = 5;
+        const WRONG_SCORE = -2;
+        let roomId = '';
+        let yourPlayerId = '';
+        let playerName = '';
+        let isHost = false;
+        let gameActive = true;
+        let players = {};
+        let currentQuestion = {};
+        let correctAnswer = "";
+        let rematchRequests = {};
 
-    // Event listeners
-    createRoomBtn.addEventListener('click', createRoom);
-    joinRoomBtn.addEventListener('click', joinRoom);
+        // DOM elements (tetap sama)
+        const menuScreen = document.getElementById('menu-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const playerNameInput = document.getElementById('player-name');
+        const roomCodeInput = document.getElementById('room-code');
+        const createRoomBtn = document.getElementById('create-room-btn');
+        const joinRoomBtn = document.getElementById('join-room-btn');
+        const displayRoomCode = document.getElementById('display-room-code');
+        const playerList = document.getElementById('player-list');
+        const playerYouDisplay = document.getElementById('player-you');
+        const playerOpponentDisplay = document.getElementById('player-opponent');
+        const progressYou = document.getElementById('progress-you');
+        const countryNameDisplay = document.getElementById('country-name');
+        const flagsContainer = document.getElementById('flags-container');
+        const resultMessage = document.getElementById('result-message');
+        const winnerMessage = document.getElementById('winner-message');
+        const loserMessage = document.getElementById('loser-message');
+        const rematchContainer = document.getElementById('rematch-container');
+        const rematchBtn = document.getElementById('rematch-btn');
 
-    function generateId() {
-        return Math.random().toString(36).substr(2, 9);
-    }
+        // Event listeners (tetap sama)
+        createRoomBtn.addEventListener('click', createRoom);
+        joinRoomBtn.addEventListener('click', joinRoom);
+        rematchBtn.addEventListener('click', requestRematch);
 
-    function generateRoomCode() {
-        return Math.random().toString(36).substr(2, 5).toUpperCase();
-    }
-
-    async function createRoom() {
-        playerName = playerNameInput.value.trim();
-        if (!playerName) {
-            alert('Masukkan nama kamu dulu!');
-            return;
+        // Fungsi-fungsi utility (tetap sama)
+        function generateId() {
+            return Math.random().toString(36).substr(2, 9);
         }
 
-        const playerId = generateId();
-        yourPlayerId = playerId; // Set ID pemain lokal
-        roomId = generateRoomCode();
-        isHost = true;
-
-        displayRoomCode.textContent = roomId;
-        menuScreen.style.display = 'none';
-        gameScreen.style.display = 'flex';
-
-        try {
-            await set(ref(database, 'rooms/' + roomId), {
-                host: playerId,
-                players: {
-                    [playerId]: {
-                        name: playerName,
-                        score: 0
-                    }
-                },
-                gameState: "waiting",
-                currentQuestion: null
-            });
-
-            await navigator.clipboard.writeText(roomId);
-            alert(`Room berhasil dibuat! Kode: ${roomId} (sudah disalin)`);
-
-            setupRoomListeners();
-        } catch (error) {
-            console.error("Error:", error);
-            alert("Gagal membuat room");
-        }
-    }
-
-    async function joinRoom() {
-        playerName = playerNameInput.value.trim();
-        roomId = roomCodeInput.value.trim().toUpperCase();
-
-        if (!playerName || !roomId) {
-            alert('Isi nama dan kode room!');
-            return;
+        function generateRoomCode() {
+            return Math.random().toString(36).substr(2, 5).toUpperCase();
         }
 
-        const playerId = generateId();
-        yourPlayerId = playerId; // Set ID pemain lokal
-        isHost = false;
+        // Fungsi room (tetap sama)
+        async function createRoom() {
+            playerName = playerNameInput.value.trim();
+            if (!playerName) {
+                alert('Masukkan nama kamu dulu!');
+                return;
+            }
 
-        try {
-            await set(ref(database, 'rooms/' + roomId + '/players/' + playerId), {
-                name: playerName,
-                score: 0
-            });
+            const playerId = generateId();
+            yourPlayerId = playerId;
+            roomId = generateRoomCode();
+            isHost = true;
 
             displayRoomCode.textContent = roomId;
             menuScreen.style.display = 'none';
             gameScreen.style.display = 'flex';
 
-            setupRoomListeners();
-        } catch (error) {
-            console.error("Error:", error);
-            alert("Gagal gabung room");
+            try {
+                await set(ref(database, 'rooms/' + roomId), {
+                    host: playerId,
+                    players: {
+                        [playerId]: {
+                            name: playerName,
+                            score: 0
+                        }
+                    },
+                    gameState: "waiting",
+                    currentQuestion: null,
+                    winner: null,
+                    rematchRequests: {}
+                });
+
+                await navigator.clipboard.writeText(roomId);
+                alert(`Room berhasil dibuat! Kode: ${roomId} (sudah disalin)`);
+
+                setupRoomListeners();
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Gagal membuat room");
+            }
         }
-    }
 
-    function setupRoomListeners() {
-        onValue(ref(database, 'rooms/' + roomId + '/players'), (snapshot) => {
-            players = snapshot.val() || {};
-            updatePlayerList();
+        async function joinRoom() {
+            playerName = playerNameInput.value.trim();
+            roomId = roomCodeInput.value.trim().toUpperCase();
 
-            // Perbarui tampilan skor dan identifikasi Anda dan Lawan
-            let yourScore = 0;
-            let opponentScore = 0;
+            if (!playerName || !roomId) {
+                alert('Isi nama dan kode room!');
+                return;
+            }
+
+            const playerId = generateId();
+            yourPlayerId = playerId;
+            isHost = false;
+
+            try {
+                await set(ref(database, 'rooms/' + roomId + '/players/' + playerId), {
+                    name: playerName,
+                    score: 0
+                });
+
+                displayRoomCode.textContent = roomId;
+                menuScreen.style.display = 'none';
+                gameScreen.style.display = 'flex';
+
+                setupRoomListeners();
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Gagal gabung room");
+            }
+        }
+
+        // Fungsi setup game (tetap sama)
+        function setupRoomListeners() {
             let opponentName = "Lawan";
 
-            for (const playerId in players) {
-                if (players.hasOwnProperty(playerId)) {
-                    const player = players[playerId];
+            onValue(ref(database, 'rooms/' + roomId + '/players'), (snapshot) => {
+                players = snapshot.val() || {};
+                updatePlayerList();
+
+                let yourScore = 0;
+                let opponentScore = 0;
+
+                for (const playerId in players) {
                     if (playerId === yourPlayerId) {
-                        yourScore = player.score;
+                        yourScore = players[playerId].score;
                         playerYouDisplay.textContent = `Anda: ${yourScore}`;
                         progressYou.style.width = `${(yourScore / TARGET_SCORE) * 100}%`;
                     } else {
-                        opponentScore = player.score;
-                        opponentName = player.name;
+                        opponentScore = players[playerId].score;
+                        opponentName = players[playerId].name || "Lawan";
                         playerOpponentDisplay.textContent = `${opponentName}: ${opponentScore}`;
                     }
                 }
+
+                if (isHost && Object.keys(players).length >= 2) {
+                    update(ref(database, 'rooms/' + roomId), {
+                        gameState: "playing"
+                    });
+                }
+            });
+
+            onValue(ref(database, 'rooms/' + roomId + '/gameState'), (snapshot) => {
+                if (snapshot.val() === "playing") {
+                    startGame();
+                }
+            });
+
+            onValue(ref(database, 'rooms/' + roomId + '/currentQuestion'), (snapshot) => {
+                const question = snapshot.val();
+                if (question) {
+                    currentQuestion = question;
+                    correctAnswer = question.correctAnswer;
+                    displayQuestion(question.name, question.options);
+                }
+            });
+
+            onValue(ref(database, 'rooms/' + roomId + '/winner'), (snapshot) => {
+                const winner = snapshot.val();
+                if (winner) {
+                    showWinner(winner);
+                }
+            });
+
+            onValue(ref(database, 'rooms/' + roomId + '/rematchRequests'), (snapshot) => {
+                rematchRequests = snapshot.val() || {};
+                checkRematchRequests();
+            });
+        }
+
+        function updatePlayerList() {
+            playerList.innerHTML = '';
+            Object.entries(players).forEach(([id, player]) => {
+                const badge = document.createElement('div');
+                badge.className = 'player-badge';
+                badge.textContent = id === yourPlayerId ? `${player.name} (Anda)` : player.name;
+                playerList.appendChild(badge);
+            });
+        }
+
+        function startGame() {
+            if (isHost) {
+                const updates = {
+                    gameState: "playing",
+                    winner: null,
+                    currentQuestion: null,
+                    rematchRequests: {}
+                };
+                
+                Object.keys(players).forEach(id => {
+                    updates['players/' + id + '/score'] = 0;
+                });
+
+                update(ref(database, 'rooms/' + roomId), updates)
+                    .then(() => {
+                        generateQuestion();
+                    });
             }
 
-            if (isHost && Object.keys(players).length >= 2) {
+            gameActive = true;
+            winnerMessage.style.display = 'none';
+            loserMessage.style.display = 'none';
+            rematchContainer.style.display = 'none';
+            resultMessage.textContent = '';
+            
+            const flagOptions = document.querySelectorAll('.flag-option');
+            flagOptions.forEach(flag => {
+                flag.classList.remove('disabled');
+            });
+        }
+
+        // Fungsi game logic (dengan auto next question)
+        function generateQuestion() {
+            if (!gameActive) return;
+
+            const correctIndex = Math.floor(Math.random() * countries.length);
+            correctAnswer = countries[correctIndex].flag;
+            currentQuestion = countries[correctIndex];
+
+            let flagOptions = [correctAnswer];
+            while (flagOptions.length < 4) {
+                const randomFlag = countries[Math.floor(Math.random() * countries.length)].flag;
+                if (!flagOptions.includes(randomFlag)) flagOptions.push(randomFlag);
+            }
+
+            flagOptions = flagOptions.sort(() => Math.random() - 0.5);
+
+            update(ref(database, 'rooms/' + roomId), {
+                currentQuestion: {
+                    name: currentQuestion.name,
+                    options: flagOptions,
+                    correctAnswer: correctAnswer
+                }
+            });
+        }
+
+        function displayQuestion(name, options) {
+            countryNameDisplay.textContent = name;
+            flagsContainer.innerHTML = '';
+
+            options.forEach(flag => {
+                const flagElement = document.createElement('div');
+                flagElement.className = 'flag-option';
+                flagElement.textContent = flag;
+                flagElement.onclick = () => selectFlag(flag);
+                flagsContainer.appendChild(flagElement);
+            });
+
+            resultMessage.textContent = '';
+        }
+
+        // MODIFIED FUNCTION: Menambahkan auto next question
+        function selectFlag(selectedFlag) {
+            if (!gameActive || document.querySelector('.flag-option.disabled')) return;
+
+            document.querySelectorAll('.flag-option').forEach(el => {
+                el.classList.add('disabled');
+            });
+
+            const isCorrect = selectedFlag === correctAnswer;
+            const scoreChange = isCorrect ? CORRECT_SCORE : WRONG_SCORE;
+
+            update(ref(database, 'rooms/' + roomId + '/players/' + yourPlayerId), {
+                score: Math.max(0, (players[yourPlayerId]?.score || 0) + scoreChange)
+            }).then(() => {
+                resultMessage.textContent = isCorrect ? 'Benar! +5 poin' : 'Salah! -2 poin';
+                resultMessage.className = isCorrect ? 'result-message correct' : 'result-message wrong';
+
+                // Auto next question (hanya host yang generate)
+                if (isHost) {
+                    setTimeout(() => {
+                        generateQuestion();
+                    }, 1000); // Delay 1 detik
+                }
+
+                checkWinner();
+            });
+        }
+
+        // Fungsi winner (tetap sama)
+        function checkWinner() {
+            const currentScore = players[yourPlayerId]?.score || 0;
+            if (currentScore >= TARGET_SCORE && isHost) {
                 update(ref(database, 'rooms/' + roomId), {
-                    gameState: "playing"
+                    winner: players[yourPlayerId].name
                 });
             }
-        });
+        }
 
-        onValue(ref(database, 'rooms/' + roomId + '/gameState'), (snapshot) => {
-            if (snapshot.val() === "playing") {
+        function showWinner(winner) {
+            gameActive = false;
+            
+            if (winner === players[yourPlayerId]?.name) {
+                winnerMessage.textContent = "ANDA MENANG! 🎉";
+                winnerMessage.style.display = 'block';
+                loserMessage.style.display = 'none';
+            } else {
+                loserMessage.textContent = `${winner} telah memenangkan pertandingan. Maaf anda kalah 🥲🥲🥲`;
+                loserMessage.style.display = 'block';
+                winnerMessage.style.display = 'none';
+            }
+            
+            rematchContainer.style.display = 'flex';
+            rematchBtn.disabled = false;
+            rematchBtn.textContent = 'Tantang Ulang';
+            
+            document.querySelectorAll('.flag-option').forEach(el => {
+                el.classList.add('disabled');
+            });
+        }
+
+        // Fungsi rematch (tetap sama)
+        function requestRematch() {
+            rematchBtn.disabled = true;
+            rematchBtn.textContent = 'Menunggu lawan...';
+            
+            set(ref(database, 'rooms/' + roomId + '/rematchRequests/' + yourPlayerId), true)
+                .catch(error => {
+                    console.error("Error sending rematch request:", error);
+rematchBtn.disabled = false;
+rematchBtn.textContent = 'Tantang Ulang';
+});
+}
+
+function checkRematchRequests() {
+    const allPlayersRequested = Object.keys(players).every(
+        playerId => rematchRequests[playerId]
+    );
+    
+    if (allPlayersRequested && Object.keys(players).length > 0 && isHost) {
+        const updates = {
+            rematchRequests: {},
+            gameState: "playing",
+            winner: null
+        };
+        
+        set(ref(database, 'rooms/' + roomId), updates)
+            .then(() => {
                 startGame();
-            }
-        });
-
-        onValue(ref(database, 'rooms/' + roomId + '/currentQuestion'), (snapshot) => {
-            const question = snapshot.val();
-            if (question) {
-                currentQuestion = question;
-                correctAnswer = question.correctAnswer;
-                displayQuestion(question.name, question.options);
-            }
-        });
-
-        onValue(ref(database, 'rooms/' + roomId + '/winner'), (snapshot) => {
-            const winner = snapshot.val();
-            if (winner) {
-                showWinner(winner);
-            }
-        });
-    }
-
-    function updatePlayerList() {
-        playerList.innerHTML = '';
-        Object.entries(players).forEach(([id, player]) => {
-            const badge = document.createElement('div');
-            badge.className = 'player-badge';
-            badge.textContent = id === yourPlayerId ? `${player.name} (Anda)` : player.name;
-            playerList.appendChild(badge);
-        });
-    }
-
-    function startGame() {
-        if (isHost) {
-            const updates = {};
-            Object.keys(players).forEach(id => {
-                updates['players/' + id + '/score'] = 0;
+            })
+            .catch(error => {
+                console.error("Error starting rematch:", error);
             });
-            updates['winner'] = null;
-
-            update(ref(database, 'rooms/' + roomId), updates);
-            generateQuestion();
-        }
-
-        gameActive = true;
-        winnerMessage.style.display = 'none';
     }
-
-    function generateQuestion() {
-        if (!gameActive) return;
-
-        const correctIndex = Math.floor(Math.random() * countries.length);
-        correctAnswer = countries[correctIndex].flag;
-        currentQuestion = countries[correctIndex];
-
-        let flagOptions = [correctAnswer];
-        while (flagOptions.length < 4) {
-            const randomFlag = countries[Math.floor(Math.random()
-            * countries.length)].flag;
-            if (!flagOptions.includes(randomFlag)) flagOptions.push(randomFlag);
-        }
-
-        flagOptions = flagOptions.sort(() => Math.random() - 0.5);
-
-        update(ref(database, 'rooms/' + roomId), {
-            currentQuestion: {
-                name: currentQuestion.name,
-                options: flagOptions,
-                correctAnswer: correctAnswer
-            }
-        });
-    }
-
-    function displayQuestion(name, options) {
-        countryNameDisplay.textContent = name;
-        flagsContainer.innerHTML = '';
-
-        options.forEach(flag => {
-            const flagElement = document.createElement('div');
-            flagElement.className = 'flag-option';
-            flagElement.textContent = flag;
-            flagElement.onclick = () => selectFlag(flag);
-            flagsContainer.appendChild(flagElement);
-        });
-
-        resultMessage.textContent = '';
-    }
-
-    function selectFlag(selectedFlag) {
-        if (!gameActive || document.querySelector('.flag-option.disabled')) return;
-
-        document.querySelectorAll('.flag-option').forEach(el => {
-            el.classList.add('disabled');
-        });
-
-        const isCorrect = selectedFlag === correctAnswer;
-        const scoreChange = isCorrect ? CORRECT_SCORE : WRONG_SCORE;
-
-        update(ref(database, 'rooms/' + roomId + '/players/' + yourPlayerId), {
-            score: Math.max(0, (players[yourPlayerId]?.score || 0) + scoreChange)
-        }).then(() => {
-            resultMessage.textContent = isCorrect ? 'Benar! +5 poin' : 'Salah! -2 poin';
-            resultMessage.className = isCorrect ? 'result-message correct' : 'result-message wrong';
-
-            if (isHost) {
-                setTimeout(generateQuestion, 1500);
-            }
-
-            checkWinner();
-        });
-    }
-
-    function checkWinner() {
-        const currentScore = players[yourPlayerId]?.score || 0;
-        if (currentScore >= TARGET_SCORE && isHost) {
-            update(ref(database, 'rooms/' + roomId), {
-                winner: players[yourPlayerId].name
-            });
-        }
-    }
-
-    function showWinner(winner) {
-        gameActive = false;
-        winnerMessage.textContent = winner === players[yourPlayerId]?.name ?
-            "ANDA MENANG! 🎉" : `${winner} Menang!`;
-        winnerMessage.style.display = 'block';
-    }
-</script>
-
+}
+</script> 
 </body>
-  </html>
+</html>
